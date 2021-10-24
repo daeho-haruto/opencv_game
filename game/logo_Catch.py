@@ -2,73 +2,26 @@ import cv2
 import numpy as np
 import time
 import random
-import pyautogui
 
-start_time = time.time()
 cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
-# def input_timer(prompt, timeout_sec):
-#     import subprocess
-#     import sys
-#     import threading
-#     import locale
+while True:
+    _, bg_frame = cap.read()
+    bg_frame = cv2.flip(bg_frame, 1)
+    cv2.putText(bg_frame, "START : press 'q'", (30, 25), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 2)
+    cv2.putText(bg_frame, "TIMEOUT : 30sec ", (30, 65), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 2)
+    cv2.imshow("Webcam", bg_frame)
 
-#     class Local:
-#         # check if timeout occured
-#         _timeout_occured = False
+    if cv2.waitKey(1) == ord('q'):
+        break 
 
-#         def on_timeout(self, process):
-#             self._timeout_occured = True
-#             process.kill()
-#             # clear stdin buffer (for linux)
-#             # when some keys hit and timeout occured before enter key press,
-#             # that input text passed to next input().
-#             # remove stdin buffer.
-#             try:
-#                 import termios
-#                 termios.tcflush(sys.stdin, termios.TCIFLUSH)
-#             except ImportError:
-#                 # windows, just exit
-#                 pass
-
-#         def input_timer_main(self, prompt_in, timeout_sec_in):
-#             # print with no new line
-#             print(prompt_in, end="")
-
-#             # print prompt_in immediately
-#             sys.stdout.flush()
-
-#             # new python input process create.
-#             # and print it for pass stdout
-#             cmd = [sys.executable, '-c', 'print(input())']
-#             with subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as proc:
-#                 timer_proc = threading.Timer(timeout_sec_in, self.on_timeout, [proc])
-#                 try:
-#                     # timer set
-#                     timer_proc.start()
-#                     stdout, stderr = proc.communicate()
-
-#                     # get stdout and trim new line character
-#                     result = stdout.decode(locale.getpreferredencoding()).strip("\r\n")
-#                 finally:
-#                     # timeout clear
-#                     timer_proc.cancel()
-
-#             # timeout check
-#             if self._timeout_occured is True:
-#                 # move the cursor to next line
-#                 print("")
-#                 raise TimeoutError
-#             return result
-
-#     t = Local()
-#     return t.input_timer_main(prompt, timeout_sec)
+start_time = time.time()
 
 class Object:
     def __init__(self, size=50):
-        self.logo_org = cv2.imread('opencv_project\img\logo.png')
+        self.logo_org = cv2.imread('game\img\logo.png')
         self.size = size
         self.logo = cv2.resize(self.logo_org, (size, size))
         img2gray = cv2.cvtColor(self.logo, cv2.COLOR_BGR2GRAY)
@@ -98,24 +51,6 @@ class Object:
             self.x = num_x
         
         return check, self.score
-        
-        # if check :
-        #     self.score += 1 
-        #     self.y = num_y
-        #     self.x = num_x
-        #     pyautogui.click(650, 1000)
-        #     pyautogui.typewrite('true', interval=0.1)
-        #     pyautogui.press('enter') 
-        #     return check
-        # else :
-        #     try:
-        #         put = input_timer('timer >> ',3)
-        #         print(put)
-        #     except TimeoutError as e:
-        #         self.score -= 1
-        #         self.y = num_y
-        #         self.x = num_x
-        #         print("time out")
             
 def make_mask_bgr(img_bgr):
     img_hsv = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2HSV)
@@ -143,8 +78,11 @@ while True:
     # cv2.imshow("track", delta_frame)
 
     hit, score = obj.update_position(delta_frame)
-    if score == 10:
-        break;
+    end_time = time.time()
+
+    rast_time = int(end_time-start_time)
+    if rast_time == 20:
+        break
 
     obj.insert_object(frame)
 
@@ -153,7 +91,7 @@ while True:
     
     text = f"Score: {obj.score}"
     cv2.putText(frame, text, (10, 20), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 2)
-
+    cv2.putText(frame, str(rast_time)+"sec", (560, 20), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 0), 2)
     cv2.imshow("Webcam", frame)
 
     if cv2.waitKey(1) == ord('q'):
@@ -162,7 +100,4 @@ while True:
 cap.release()
 cv2.destroyAllWindows()
 
-end_time = time.time()
-
 print(score)
-print(end_time-start_time)
