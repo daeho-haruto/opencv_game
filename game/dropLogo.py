@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
@@ -20,7 +20,7 @@ bg_gray = cv2.GaussianBlur(bg_gray, (5, 5), 0)
 
 class Object:
     def __init__(self, size=50):
-        self.logo_org = cv2.imread('opencv_project\img\logo.png')
+        self.logo_org = cv2.imread('game\img\logo.png')
         self.size = size
         self.logo = cv2.resize(self.logo_org, (size, size))
         img2gray = cv2.cvtColor(self.logo, cv2.COLOR_BGR2GRAY)

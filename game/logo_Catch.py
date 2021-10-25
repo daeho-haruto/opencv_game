@@ -3,7 +3,7 @@ import numpy as np
 import time
 import random
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
@@ -55,8 +55,8 @@ class Object:
 def make_mask_bgr(img_bgr):
     img_hsv = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2HSV)
 
-    low = np.array([100,80,2])
-    high = np.array([126,255,255])
+    low = np.array([110,180,120])
+    high = np.array([130,255,255])
 
     img_mask = cv2.inRange(img_hsv, low, high)
 
@@ -75,7 +75,7 @@ while True:
 
     thresh = cv2.threshold(delta_frame, 127, 255, cv2.THRESH_BINARY)[1] 
     thresh = cv2.dilate(thresh, None, iterations=2)
-    # cv2.imshow("track", delta_frame)
+    cv2.imshow("track", delta_frame)
 
     hit, score = obj.update_position(delta_frame)
     end_time = time.time()

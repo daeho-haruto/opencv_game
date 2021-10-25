@@ -27,7 +27,7 @@ label = file[:, -1].astype(np.float32)
 knn = cv2.ml.KNearest_create()
 knn.train(angle, cv2.ml.ROW_SAMPLE, label)
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 while cap.isOpened():
     ret, img = cap.read()
@@ -86,15 +86,19 @@ while cap.isOpened():
                 elif rps_result[0]['rps'] == 'one':
                     count[0] += 1
                     cv2.putText(img, "drop object Game", (10,30), 0, 1, (0, 0, 255), 2)
-                    if count[0] == 50: exit()
+                    if count[0] == 50: 
+                        cv2.destroyWindow('Game')
+                        import dropLogo
                 elif rps_result[0]['rps'] == 'two':
                     count[1] += 1
                     cv2.putText(img, "catch object Game", (10,30), 0, 1, (0, 0, 255), 2)
-                    if count[1] == 50: exit()
+                    if count[1] == 50:
+                        import logo_Catch
                 elif rps_result[0]['rps'] == 'three':
                     count[2] += 1
                     cv2.putText(img, "ping-pong Game", (10,30), 0, 1, (0, 0, 255), 2)
-                    if count[2] == 50: exit()
+                    if count[2] == 50: 
+                        import pong
                 elif rps_result[0]['rps'] == 'four':
                     count[3] += 1
                     cv2.putText(img, "snake Game", (10,30), 0, 1, (0, 0, 255), 2)
@@ -110,3 +114,6 @@ while cap.isOpened():
     cv2.imshow('Game', img)
     if cv2.waitKey(1) == ord('q'):
         break
+
+cap.release()
+cv2.destroyAllWindows()
